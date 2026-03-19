@@ -19,78 +19,84 @@ export default async function JobsPage() {
     .from("jobs")
     .select("*")
     .eq("is_active", true)
-    .order("posted_at", { ascending: false })
+    .order("posted_date", { ascending: false })
 
   const defaultJobs = [
     {
       id: 1,
-      title: "Senior Export Manager",
-      company: "Global Trade Solutions",
+      job_title: "Senior Export Manager",
       location: "Mumbai",
-      job_type: "Full-time",
       experience: "5-8 years",
-      salary_range: "15-20 LPA",
       description: "Looking for an experienced export manager to lead our international operations team.",
-      posted_at: "2024-02-18",
+      salary: "15-20 LPA",
+      posted_date: "2024-02-18",
+      openings: 1,
     },
     {
       id: 2,
-      title: "Buying Agent - Handicrafts",
-      company: "Artisan Exports Ltd",
+      job_title: "Buying Agent - Handicrafts",
       location: "Jaipur",
-      job_type: "Full-time",
       experience: "3-5 years",
-      salary_range: "8-12 LPA",
       description: "Seeking a buying agent specializing in handicrafts and home decor items.",
-      posted_at: "2024-02-15",
+      salary: "8-12 LPA",
+      posted_date: "2024-02-15",
+      openings: 2,
     },
     {
       id: 3,
-      title: "Trade Compliance Officer",
-      company: "Export Ventures India",
+      job_title: "Trade Compliance Officer",
       location: "Delhi NCR",
-      job_type: "Full-time",
       experience: "4-6 years",
-      salary_range: "10-15 LPA",
       description: "Required trade compliance officer to ensure adherence to export regulations.",
-      posted_at: "2024-02-10",
+      salary: "10-15 LPA",
+      posted_date: "2024-02-10",
+      openings: 1,
     },
     {
       id: 4,
-      title: "Quality Control Inspector",
-      company: "Textile Export House",
+      job_title: "Quality Control Inspector",
       location: "Tirupur",
-      job_type: "Full-time",
       experience: "2-4 years",
-      salary_range: "5-8 LPA",
       description: "Looking for quality control inspector for our textile export unit.",
-      posted_at: "2024-02-05",
+      salary: "5-8 LPA",
+      posted_date: "2024-02-05",
+      openings: 1,
     },
     {
       id: 5,
-      title: "Business Development Executive",
-      company: "International Trade Corp",
+      job_title: "Business Development Executive",
       location: "Bangalore",
-      job_type: "Full-time",
       experience: "2-3 years",
-      salary_range: "6-9 LPA",
       description: "Energetic BD executive needed to develop new buyer relationships.",
-      posted_at: "2024-02-01",
+      salary: "6-9 LPA",
+      posted_date: "2024-02-01",
+      openings: 1,
     },
     {
       id: 6,
-      title: "Sourcing Specialist - Leather Goods",
-      company: "Premium Exports",
+      job_title: "Sourcing Specialist - Leather Goods",
       location: "Chennai",
-      job_type: "Contract",
       experience: "3-5 years",
-      salary_range: "7-10 LPA",
       description: "Contract position for sourcing specialist in leather goods.",
-      posted_at: "2024-01-28",
+      salary: "7-10 LPA",
+      posted_date: "2024-01-28",
+      openings: 1,
     },
   ]
 
-  const displayJobs = jobs && jobs.length > 0 ? jobs : defaultJobs
+  const displayJobs =
+    jobs && jobs.length > 0
+      ? jobs.map((j: any, i: number) => ({
+          id: j.id ?? i,
+          job_title: j.job_title ?? "",
+          location: j.location ?? "",
+          description: j.description ?? "",
+          experience: j.experience ?? "",
+          salary: j.salary ?? "",
+          posted_date: j.posted_date ?? "",
+          openings: j.openings ?? 1,
+        }))
+      : defaultJobs
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -147,12 +153,14 @@ export default async function JobsPage() {
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                       <div>
                         <CardTitle className="text-xl">
-                          {job.title}
+                          {job.job_title}
                         </CardTitle>
-                        <p className="text-primary font-medium mt-1">{job.company}</p>
+                        <p className="text-muted-foreground text-sm mt-1">
+                          {job.openings} opening{job.openings === 1 ? "" : "s"}
+                        </p>
                       </div>
                       <Badge variant="outline" className="shrink-0 w-fit">
-                        {job.job_type}
+                        Active
                       </Badge>
                     </div>
                   </CardHeader>
@@ -171,11 +179,11 @@ export default async function JobsPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <DollarSign className="h-4 w-4 text-primary" />
-                        {job.salary_range}
+                        {job.salary}
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4 text-primary" />
-                        Posted {formatDate(job.posted_at)}
+                        Posted {formatDate(job.posted_date)}
                       </div>
                     </div>
                     <Button asChild className="bg-primary text-white hover:bg-primary/90">

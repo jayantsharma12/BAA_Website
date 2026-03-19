@@ -77,10 +77,19 @@ export default async function MediaCoveragePage() {
   const { data: articles } = await supabase
     .from("media_coverage")
     .select("*")
-    .order("date", { ascending: false })
+    .order("created_at", { ascending: false })
 
   const displayArticles =
-    articles && articles.length > 0 ? articles : defaultArticles
+    articles && articles.length > 0
+      ? articles.map((a: any, i: number) => ({
+          id: a.id ?? i,
+          title: a.title ?? "",
+          excerpt: a.summary ?? "",
+          date: a.created_at ?? "",
+          image_url: a.media_image ?? "",
+          external_url: a.external_link ?? "#",
+        }))
+      : defaultArticles
 
   return (
     <div className="min-h-screen flex flex-col">

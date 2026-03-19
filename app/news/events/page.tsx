@@ -1,5 +1,5 @@
-import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { Header } from "@/components/header"
 import { createClient } from "@/lib/supabase/server"
 import { Calendar, MapPin } from "lucide-react"
 import Link from "next/link"
@@ -81,10 +81,20 @@ export default async function EventsPage() {
   const { data: events } = await supabase
     .from("events")
     .select("*")
-    .eq("is_active", true)
     .order("event_date", { ascending: true })
 
-  const displayEvents = events && events.length > 0 ? events : defaultEvents
+  const displayEvents =
+    events && events.length > 0
+      ? events.map((e: any, i: number) => ({
+          id: e.id ?? i,
+          title: e.event_title ?? "Event",
+          description: e.event_description ?? "",
+          event_date: e.event_date ?? "",
+          location: e.event_location ?? "",
+          event_type: e.event_type ?? "Event",
+          image: e.event_image ?? defaultEvents[i % defaultEvents.length].image,
+        }))
+      : defaultEvents
 
   return (
     <div className="min-h-screen flex flex-col">

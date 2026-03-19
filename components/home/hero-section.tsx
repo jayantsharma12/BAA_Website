@@ -4,29 +4,9 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { heroMedia } from "@/lib/landing/hero-media"
 
-const slides = [
-  {
-    image: "https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1920",
-    title: "Voice of the Industry",
-    subtitle: "The Buying Agents Association represents and supports buying agents across India, fostering international trade relationships and driving industry excellence for over seven decades.",
-  },
-  {
-    image: "https://images.pexels.com/photos/1427107/pexels-photo-1427107.jpeg?auto=compress&cs=tinysrgb&w=1920",
-    title: "Connecting Buyers & Sellers Globally",
-    subtitle: "Bridging the gap between international buyers and Indian exporters with trust, expertise, and decades of industry knowledge.",
-  },
-  {
-    image: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1920",
-    title: "Building Stronger Trade Relations",
-    subtitle: "Fostering partnerships that drive growth, innovation, and excellence in India's thriving export ecosystem.",
-  },
-  {
-    image: "https://images.pexels.com/photos/4481259/pexels-photo-4481259.jpeg?auto=compress&cs=tinysrgb&w=1920",
-    title: "Supporting Members Since 1946",
-    subtitle: "Over seven decades of championing the rights and interests of buying agents across every major industry sector.",
-  },
-]
+const slides = heroMedia.slides
 
 export function HeroSection() {
   const [current, setCurrent] = useState(0)
@@ -57,7 +37,7 @@ export function HeroSection() {
       <div
         className="absolute inset-0 bg-cover bg-center transition-opacity duration-500"
         style={{
-          backgroundImage: `url("${slides[current].image}")`,
+          backgroundImage: `url("${slides[current].imageUrl}")`,
           opacity: fade ? 1 : 0,
         }}
       />
@@ -65,39 +45,37 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-black/55" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
-        {/* Left aligned like old site */}
-        <div className="max-w-2xl">
-          <h1
-            className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight transition-opacity duration-500"
-            style={{ opacity: fade ? 1 : 0 }}
-          >
-            {slides[current].title}
-          </h1>
-
-          <p
-            className="mt-6 text-base md:text-lg text-white/80 leading-relaxed transition-opacity duration-500"
-            style={{ opacity: fade ? 1 : 0 }}
-          >
-            {slides[current].subtitle}
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row gap-4">
-            <Button
-              asChild
-              size="lg"
-              className="bg-primary text-white hover:bg-primary/90 text-base px-8"
+        <div className="grid items-center gap-10 lg:grid-cols-12">
+          {/* Left aligned text */}
+          <div className="lg:col-span-7 max-w-2xl">
+            <h1
+              className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight transition-opacity duration-500 drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]"
+              style={{ opacity: fade ? 1 : 0 }}
             >
-            
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-white/40 text-white bg-transparent hover:bg-white/10 text-base px-8"
+              {slides[current].title}
+            </h1>
+
+            <p
+              className="mt-6 text-base md:text-lg text-white/80 leading-relaxed transition-opacity duration-500"
+              style={{ opacity: fade ? 1 : 0 }}
             >
-              <Link href="/about">Learn More</Link>
-            </Button>
+              {slides[current].subtitle}
+            </p>
           </div>
+
+          {/* Right overlay image (on top of bg) */}
+          {heroMedia.rightOverlayImageUrl ? (
+            <div className="hidden lg:block lg:col-span-5">
+              <div className="relative mx-auto w-full max-w-[420px]">
+                <img
+                  src={heroMedia.rightOverlayImageUrl}
+                  alt={heroMedia.rightOverlayAlt || "https://images.pexels.com/photos/32156544/pexels-photo-32156544.jpeg"}
+                  className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] select-none pointer-events-none"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {/* Dots - bottom center */}

@@ -14,10 +14,9 @@ export const metadata = {
 export default async function AboutPage() {
   const supabase = await createClient()
   
-  const { data: content } = await supabase
+  const { data: rows } = await supabase
     .from("about_content")
     .select("*")
-    .single()
   
   const defaultContent = {
     history: `The Buying Agents Association (BAA) was established in 1946, just before India's independence, by a group of visionary entrepreneurs who recognized the need for a unified voice representing buying agents in international trade.
@@ -38,7 +37,17 @@ Innovation - We embrace change and continuously improve.
 Service - We are dedicated to serving our members and the industry.`,
   }
 
-  const displayContent = content || defaultContent
+  const bySection = new Map<string, any>()
+  ;(rows || []).forEach((r: any) => {
+    if (r?.section) bySection.set(String(r.section), r)
+  })
+
+  const displayContent = {
+    history: bySection.get("history")?.content ?? defaultContent.history,
+    mission: bySection.get("mission")?.content ?? defaultContent.mission,
+    vision: bySection.get("vision")?.content ?? defaultContent.vision,
+    values: bySection.get("values")?.content ?? defaultContent.values,
+  }
 
   const sections = [
     { icon: History, title: "Our History", content: displayContent.history },

@@ -14,7 +14,7 @@ export default async function CommitteesPage() {
   const { data: committees } = await supabase
     .from("committees")
     .select("*")
-    .order("display_order", { ascending: true })
+    .order("sort_order", { ascending: true })
 
   const defaultCommittees = [
     {
@@ -69,7 +69,15 @@ export default async function CommitteesPage() {
   ]
 
   const displayCommittees =
-    committees && committees.length > 0 ? committees : defaultCommittees
+    committees && committees.length > 0
+      ? committees.map((c: any, i: number) => ({
+          id: c.id ?? i,
+          name: c.committee_name ?? "",
+          head: c.head_name ?? "",
+          email: c.email ?? "",
+          image_url: c.head_photo ?? "",
+        }))
+      : defaultCommittees
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -129,14 +137,11 @@ export default async function CommitteesPage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <p
-                        className="text-xs font-bold uppercase tracking-wide leading-tight"
-                        style={{ color: "#E8520A" }}
-                      >
+                      <p className="text-xs font-bold uppercase tracking-wide leading-tight text-foreground">
                         {committee.name}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Headed by {committee.head}
+                      <p className="text-xs font-semibold text-foreground mt-1">
+                        {committee.head}
                       </p>
                       {committee.email && (
                         <a

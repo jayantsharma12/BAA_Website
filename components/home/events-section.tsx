@@ -55,15 +55,19 @@ export async function EventsSection() {
   const { data: events } = await supabase
     .from("events")
     .select("*")
-    .eq("is_active", true)
     .order("event_date", { ascending: true })
     .limit(10)
 
   const displayEvents =
     events && events.length > 0
-      ? events.map((e, i) => ({
-          ...e,
-          image: defaultEvents[i % defaultEvents.length].image,
+      ? events.map((e: any, i: number) => ({
+          id: e.id ?? i,
+          title: e.event_title ?? "Event",
+          description: e.event_description ?? "",
+          event_date: e.event_date ?? "",
+          location: e.event_location ?? "",
+          event_type: e.event_type ?? "Event",
+          image: e.event_image ?? defaultEvents[i % defaultEvents.length].image,
         }))
       : defaultEvents
 

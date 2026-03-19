@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { Menu, X, ChevronDown, UserCircle, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -15,16 +15,7 @@ import {
 
 const navItems = [
   { label: "HOME", href: "/" },
-  {
-    label: "ABOUT US",
-    href: "/about",
-    children: [
-      { label: "Our Journey", href: "/about" },
-      { label: "Governing Body", href: "/about/governing-body" },
-      { label: "BAA Committees", href: "/about/committees" },
-      { label: "Founding Members", href: "/about/founding-members" },
-    ],
-  },
+  { label: "ABOUT US", href: "/about" },
   {
     label: "NEWS",
     href: "/news",
@@ -40,9 +31,15 @@ const navItems = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const isActive = (href: string) => {
+    if (!mounted) return false
     if (href === "/") return pathname === "/"
     return pathname.startsWith(href)
   }
@@ -114,40 +111,50 @@ export function Header() {
       {/* Nav Row — centered */}
       <div className="hidden lg:block border-t border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-center gap-0">
+          <nav className="flex items-center justify-center gap-1 py-2">
             {navItems.map((item) =>
               item.children ? (
-                <DropdownMenu key={item.label}>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      className={`flex items-center gap-1 px-5 py-3 text-sm font-semibold tracking-wide transition-colors hover:text-[#E8520A] focus:outline-none ${
-                        isActive(item.href)
-                          ? "text-white bg-[#E8520A]"
-                          : "text-[#2c2c2c]"
-                      }`}
-                    >
-                      {item.label}
-                      <ChevronDown className="h-3 w-3" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-52 rounded-none mt-0 shadow-lg">
-                    {item.children.map((child) => (
-                      <DropdownMenuItem key={child.href} asChild>
-                        <Link
-                          href={child.href}
-                          className="w-full cursor-pointer text-sm py-2 px-4 hover:text-[#E8520A]"
-                        >
-                          {child.label}
-                        </Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                mounted ? (
+                  <DropdownMenu key={item.label}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={`flex items-center gap-1 px-4 py-2 text-sm font-semibold tracking-wide transition-colors focus:outline-none rounded-full hover:bg-[#E8520A] hover:text-white ${
+                          isActive(item.href)
+                            ? "text-white bg-[#E8520A]"
+                            : "text-[#2c2c2c]"
+                        }`}
+                      >
+                        {item.label}
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-52 rounded-none mt-0 shadow-lg">
+                      {item.children.map((child) => (
+                        <DropdownMenuItem key={child.href} asChild>
+                          <Link
+                            href={child.href}
+                            className="w-full cursor-pointer text-sm py-2 px-4 hover:text-[#E8520A]"
+                          >
+                            {child.label}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="px-4 py-2 text-sm font-semibold tracking-wide text-[#2c2c2c] rounded-full hover:bg-[#E8520A] hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                )
               ) : (
                 <Link
                   key={item.label}
                   href={item.href}
-                  className={`px-5 py-3 text-sm font-semibold tracking-wide transition-colors hover:text-[#E8520A] ${
+                  className={`px-4 py-2 text-sm font-semibold tracking-wide transition-colors rounded-full hover:bg-[#E8520A] hover:text-white ${
                     isActive(item.href)
                       ? "text-white bg-[#E8520A]"
                       : "text-[#2c2c2c]"

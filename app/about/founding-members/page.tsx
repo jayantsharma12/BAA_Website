@@ -14,7 +14,7 @@ export default async function FoundingMembersPage() {
   const { data: members } = await supabase
     .from("founding_members")
     .select("*")
-    .order("display_order", { ascending: true })
+    .order("sort_order", { ascending: true })
 
   const defaultMembers = [
     { id: 1, name: "Mr. Rakesh Kumar", title: "Director General", company: "Export Promotion Council for Handicrafts", image_url: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg" },
@@ -30,7 +30,15 @@ export default async function FoundingMembersPage() {
   ]
 
   const displayMembers =
-    members && members.length > 0 ? members : defaultMembers
+    members && members.length > 0
+      ? members.map((m: any, i: number) => ({
+          id: m.id ?? i,
+          name: m.name ?? "",
+          title: m.designation ?? "",
+          company: m.organization ?? "",
+          image_url: m.photo ?? "",
+        }))
+      : defaultMembers
 
   return (
     <div className="min-h-screen flex flex-col">

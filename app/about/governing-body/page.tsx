@@ -14,7 +14,7 @@ export default async function GoverningBodyPage() {
   const { data: members } = await supabase
     .from("governing_body")
     .select("*")
-    .order("display_order", { ascending: true })
+    .order("sort_order", { ascending: true })
 
   const defaultMembers = [
     { id: 1, name: "Mrs. Mandira Malik", designation: "Chairperson", image_url: "https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg" },
@@ -35,7 +35,15 @@ export default async function GoverningBodyPage() {
     { id: 16, name: "Ms. Rohini Suri", designation: "Special Invitee", image_url: "https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg" },
   ]
 
-  const displayMembers = members && members.length > 0 ? members : defaultMembers
+  const displayMembers =
+    members && members.length > 0
+      ? members.map((m: any, i: number) => ({
+          id: m.id ?? i,
+          name: m.name ?? "",
+          designation: m.designation ?? "",
+          image_url: m.photo ?? "",
+        }))
+      : defaultMembers
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -99,11 +107,11 @@ export default async function GoverningBodyPage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#E8520A" }}>
-                        {member.designation}
-                      </p>
-                      <p className="text-xs font-bold text-foreground mt-0.5 uppercase tracking-wide">
+                      <p className="text-xs font-bold text-foreground uppercase tracking-wide">
                         {member.name}
+                      </p>
+                      <p className="text-xs font-semibold uppercase tracking-wide mt-0.5 text-foreground/80">
+                        {member.designation}
                       </p>
                     </div>
                   ))}

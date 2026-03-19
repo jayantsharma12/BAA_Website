@@ -8,8 +8,8 @@ export async function DynamicBenefitsSection() {
 
   const { data: benefits, error } = await supabase
     .from('benefits')
-    .select('id, title, description')
-    .order('created_at', { ascending: true })
+    .select('id, title, description, icon, sort_order')
+    .order('sort_order', { ascending: true })
 
   if (error) {
     console.error('[v0] Error fetching benefits:', error)
@@ -25,31 +25,36 @@ export async function DynamicBenefitsSection() {
   return (
     <section className="py-12 md:py-16 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-              Member Benefits
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground mt-2">
-              Exclusive advantages for all BAA members
-            </p>
-          </div>
+        <div className="mb-10 text-center animate-rise-in-slow">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+            Member Benefits
+          </h2>
+          <p className="text-sm md:text-base text-muted-foreground mt-2">
+            Exclusive advantages for all BAA members
+          </p>
           {benefits && benefits.length > 6 && (
-            <Button asChild variant="outline" size="sm" className="text-primary border-primary hover:bg-primary/5">
-              <Link href="/benefits">View All</Link>
-            </Button>
+            <div className="mt-4">
+              <Button asChild variant="outline" size="sm" className="text-primary border-primary hover:bg-primary/5">
+                <Link href="/benefits">View All</Link>
+              </Button>
+            </div>
           )}
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 auto-rows-max">
-          {displayBenefits.map((benefit) => (
-            <BenefitCard
+          {displayBenefits.map((benefit, index) => (
+            <div
               key={benefit.id}
-              id={benefit.id}
-              title={benefit.title}
-              description={benefit.description}
-              icon_name="leaf"
-            />
+              className="animate-rise-in"
+              style={{ animationDelay: `${index * 120}ms` }}
+            >
+              <BenefitCard
+                id={benefit.id}
+                title={benefit.title}
+                description={benefit.description}
+                icon_name={benefit.icon ?? "briefcase"}
+              />
+            </div>
           ))}
         </div>
       </div>

@@ -14,13 +14,13 @@ export async function InfoCardsSection() {
   const { data: cards } = await supabase
     .from("info_cards")
     .select("*")
-    .order("display_order", { ascending: true })
+    .order("sort_order", { ascending: true })
 
   const defaultCards = [
     {
       id: 1,
       title: "A vast, versed fraternity to make their voices heard in unison",
-      description: "",
+      description: "Join a strong network of sourcing professionals across India.",
       icon: "users",
       link_url: "/about",
       link_text: "Discover Our Story",
@@ -28,7 +28,7 @@ export async function InfoCardsSection() {
     {
       id: 2,
       title: "Regular updating of the agents about ongoing and forecasting industry trends and tactics",
-      description: "",
+      description: "Stay informed with updates, notices, and industry changes.",
       icon: "filetext",
       link_url: "/news/notices",
       link_text: "View Notices",
@@ -36,7 +36,7 @@ export async function InfoCardsSection() {
     {
       id: 3,
       title: "Successful lobbying with GOI in sourcing agent community's interest resulting in revision of trade policies and laws",
-      description: "",
+      description: "Advocacy that strengthens member interests and policy outcomes.",
       icon: "briefcase",
       link_url: "/about",
       link_text: "Learn More",
@@ -44,14 +44,24 @@ export async function InfoCardsSection() {
     {
       id: 4,
       title: "Provisioning apt resources for facilitating regular interface",
-      description: "",
+      description: "Resources and support to help members collaborate effectively.",
       icon: "users",
       link_url: "/membership",
       link_text: "Join Us",
     },
   ]
 
-  const displayCards = cards && cards.length > 0 ? cards : defaultCards
+  const displayCards =
+    cards && cards.length > 0
+      ? cards.map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          description: c.description ?? "",
+          icon: c.icon ?? "users",
+          link_url: undefined,
+          link_text: undefined,
+        }))
+      : defaultCards
 
   return (
     <section
@@ -91,6 +101,11 @@ export async function InfoCardsSection() {
               <p className="text-white text-sm leading-relaxed font-medium">
                 {card.title}
               </p>
+              {card.description ? (
+                <p className="mt-2 text-white/75 text-xs leading-relaxed">
+                  {card.description}
+                </p>
+              ) : null}
               {card.link_url && (
                 <Link
                   href={card.link_url}

@@ -1,6 +1,18 @@
 'use client'
 
-import { Briefcase, Users, FileText, Globe, Network, Zap } from 'lucide-react'
+import {
+  Briefcase,
+  Users,
+  FileText,
+  Globe,
+  Network,
+  Zap,
+  Megaphone,
+  GraduationCap,
+  TrendingUp,
+  Scale,
+  Handshake,
+} from 'lucide-react'
 
 const iconMap: Record<string, React.ReactNode> = {
   'briefcase': <Briefcase className="h-8 w-8" />,
@@ -9,6 +21,11 @@ const iconMap: Record<string, React.ReactNode> = {
   'globe': <Globe className="h-8 w-8" />,
   'network': <Network className="h-8 w-8" />,
   'lightning': <Zap className="h-8 w-8" />,
+  'megaphone': <Megaphone className="h-8 w-8" />,
+  'graduation-cap': <GraduationCap className="h-8 w-8" />,
+  'chart-line': <TrendingUp className="h-8 w-8" />,
+  'scale': <Scale className="h-8 w-8" />,
+  'handshake': <Handshake className="h-8 w-8" />,
 }
 
 interface BenefitCardProps {
@@ -22,7 +39,7 @@ export function BenefitCard({ id, title, description, icon_name = 'briefcase' }:
   const icon = iconMap[icon_name] || iconMap['briefcase']
 
   return (
-    <div className="flex flex-col items-center text-center p-6 rounded-lg border border-border bg-card hover:shadow-md transition-shadow h-full">
+    <div className="flex flex-col items-center text-center p-6 rounded-lg bg-card hover:shadow-md transition-shadow h-full">
       <div className="text-primary mb-4">
         {icon}
       </div>

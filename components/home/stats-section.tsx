@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
-import { Users, Calendar, Briefcase, Globe, DollarSign, ShoppingBag } from "lucide-react"
+import { Briefcase, Calendar, DollarSign, Globe, ShoppingBag, Users } from "lucide-react"
 
 const iconList = [Users, Calendar, Briefcase, Globe, DollarSign, ShoppingBag]
 

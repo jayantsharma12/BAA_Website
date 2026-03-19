@@ -130,3 +130,24 @@
     font-family: 'Poppins', system-ui, sans-serif;
   }
 }
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise-in {
+  opacity: 0;
+  animation: riseIn 650ms ease-out forwards;
+}
+
+.animate-rise-in-slow {
+  opacity: 0;
+  animation: riseIn 800ms ease-out forwards;
+}
