@@ -106,7 +106,7 @@ export default async function MediaCoveragePage() {
                 Notice Board
               </Link>
               <Link
-                href="/news"
+                href="/news/events"
                 className="px-3 py-2 text-sm font-medium rounded text-foreground hover:text-[#E8520A] transition-colors"
               >
                 Events

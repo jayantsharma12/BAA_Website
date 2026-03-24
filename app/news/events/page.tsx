@@ -64,6 +64,34 @@ const defaultEvents = [
     event_type: "Trade Fair",
     image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
+  // Past Knowledge Sessions (3 sample cards)
+  {
+    id: 7,
+    title: "Digital Export Documentation Workshop",
+    description: "Learn the latest techniques for digital export documentation and compliance.",
+    event_date: "2024-01-20",
+    location: "New Delhi",
+    event_type: "Knowledge",
+    image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: 8,
+    title: "Import/Export Regulations Session",
+    description: "A comprehensive session on current import-export regulations and compliance requirements.",
+    event_date: "2024-02-15",
+    location: "Mumbai",
+    event_type: "Knowledge",
+    image: "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
+  {
+    id: 9,
+    title: "Global Market Trends & Opportunities",
+    description: "Exploring emerging markets and opportunities for buying agents in global trade.",
+    event_date: "2024-02-28",
+    location: "Bangalore",
+    event_type: "Knowledge",
+    image: "https://images.pexels.com/photos/3184370/pexels-photo-3184370.jpeg?auto=compress&cs=tinysrgb&w=600",
+  },
 ]
 
 const formatDate = (dateString: string) => {
@@ -75,7 +103,13 @@ const formatDate = (dateString: string) => {
   })
 }
 
-export default async function EventsPage() {
+interface EventsPageProps {
+  searchParams?: {
+    show?: string
+  }
+}
+
+export default async function EventsPage({ searchParams }: EventsPageProps) {
   const supabase = await createClient()
 
   const { data: events } = await supabase
@@ -95,6 +129,14 @@ export default async function EventsPage() {
           image: e.event_image ?? defaultEvents[i % defaultEvents.length].image,
         }))
       : defaultEvents
+
+  const pastKnowledgeSessions = displayEvents.filter((event) =>
+    event.event_type?.toLowerCase().includes("knowledge"),
+  )
+
+  const selectedEvent = searchParams?.show
+    ? displayEvents.find((event) => event.id.toString() === searchParams.show)
+    : null
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -132,7 +174,23 @@ export default async function EventsPage() {
                 BAA Events
               </h1>
 
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6">
+              {selectedEvent && (
+                <section className="rounded-xl border border-border p-5 bg-white mb-8 shadow-sm">
+                  <h2 className="text-xl font-semibold mb-3">Viewing details for "{selectedEvent.title}"</h2>
+                  <p className="text-sm text-muted-foreground mb-2">{selectedEvent.description}</p>
+                  <div className="text-xs text-muted-foreground mb-2">
+                    <span className="font-semibold">Date:</span> {formatDate(selectedEvent.event_date)}
+                  </div>
+                  <div className="text-xs text-muted-foreground mb-2">
+                    <span className="font-semibold">Location:</span> {selectedEvent.location}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    <span className="font-semibold">Type:</span> {selectedEvent.event_type}
+                  </div>
+                </section>
+              )}
+
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6 mb-12">
                 {displayEvents.map((event) => (
                   <article
                     key={event.id}
@@ -184,6 +242,44 @@ export default async function EventsPage() {
                   </article>
                 ))}
               </div>
+
+              <section className="mt-12 pt-8 border-t border-border">
+                <h2 className="text-2xl font-semibold mb-4">Past Knowledge Sessions</h2>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {pastKnowledgeSessions.length > 0 ? (
+                    pastKnowledgeSessions.map((event) => (
+                      <article
+                        key={`knowledge-${event.id}`}
+                        className="rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow bg-white"
+                      >
+                        <div className="aspect-[4/3] overflow-hidden relative">
+                          <img
+                            src={event.image || "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"}
+                            alt={event.title}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-semibold text-foreground text-sm leading-snug mb-1">
+                            {event.title}
+                          </h3>
+                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                            {event.description}
+                          </p>
+                          <Link
+                            href={`/news/events?show=${event.id}`}
+                            className="inline-flex items-center justify-center mt-3 rounded-md bg-[#E8520A] px-3 py-2 text-xs font-semibold text-white hover:bg-[#cc4600] transition-colors"
+                          >
+                            View More
+                          </Link>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No past knowledge sessions available.</p>
+                  )}
+                </div>
+              </section>
             </div>
           </div>
         </div>
