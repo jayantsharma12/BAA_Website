@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server"
 import { Calendar, MapPin } from "lucide-react"
 import Link from "next/link"
 
+export const revalidate = 0
+
 export const metadata = {
   title: "Events | Buying Agents Association",
   description: "Stay updated with the latest events and gatherings from the Buying Agents Association.",
@@ -64,32 +66,31 @@ const defaultEvents = [
     event_type: "Trade Fair",
     image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
-  // Past Knowledge Sessions (3 sample cards)
+]
+
+const defaultKnowledgeSessions = [
   {
-    id: 7,
+    id: "k1",
     title: "Digital Export Documentation Workshop",
     description: "Learn the latest techniques for digital export documentation and compliance.",
-    event_date: "2024-01-20",
+    session_date: "2024-01-20",
     location: "New Delhi",
-    event_type: "Knowledge",
     image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
-    id: 8,
+    id: "k2",
     title: "Import/Export Regulations Session",
     description: "A comprehensive session on current import-export regulations and compliance requirements.",
-    event_date: "2024-02-15",
+    session_date: "2024-02-15",
     location: "Mumbai",
-    event_type: "Knowledge",
     image: "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
   {
-    id: 9,
+    id: "k3",
     title: "Global Market Trends & Opportunities",
     description: "Exploring emerging markets and opportunities for buying agents in global trade.",
-    event_date: "2024-02-28",
+    session_date: "2024-02-28",
     location: "Bangalore",
-    event_type: "Knowledge",
     image: "https://images.pexels.com/photos/3184370/pexels-photo-3184370.jpeg?auto=compress&cs=tinysrgb&w=600",
   },
 ]
@@ -117,6 +118,11 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     .select("*")
     .order("event_date", { ascending: true })
 
+  const { data: knowledgeSessions } = await supabase
+    .from("knowledge_sessions")
+    .select("*")
+    .order("session_date", { ascending: true })
+
   const displayEvents =
     events && events.length > 0
       ? events.map((e: any, i: number) => ({
@@ -130,9 +136,17 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         }))
       : defaultEvents
 
-  const pastKnowledgeSessions = displayEvents.filter((event) =>
-    event.event_type?.toLowerCase().includes("knowledge"),
-  )
+  const displayKnowledgeSessions =
+    knowledgeSessions && knowledgeSessions.length > 0
+      ? knowledgeSessions.map((k: any) => ({
+          id: k.id,
+          title: k.title ?? "Session",
+          description: k.description ?? "",
+          session_date: k.session_date ?? "",
+          location: k.location ?? "",
+          image: k.image ?? "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600",
+        }))
+      : defaultKnowledgeSessions
 
   const selectedEvent = searchParams?.show
     ? displayEvents.find((event) => event.id.toString() === searchParams.show)
@@ -145,7 +159,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex gap-8">
 
-            {/* Sidebar — same as notices */}
+            {/* Sidebar */}
             <aside className="hidden md:flex flex-col gap-2 w-44 shrink-0 pt-1">
               <Link
                 href="/news/notices"
@@ -171,12 +185,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
             {/* Main Content */}
             <div className="flex-1 min-w-0">
               <h1 className="font-serif text-3xl font-bold text-foreground mb-2">
-                BAA Events
+                Past Events
               </h1>
 
               {selectedEvent && (
                 <section className="rounded-xl border border-border p-5 bg-white mb-8 shadow-sm">
-                  <h2 className="text-xl font-semibold mb-3">Viewing details for "{selectedEvent.title}"</h2>
+                  <h2 className="text-xl font-semibold mb-3">
+                    Viewing details for "{selectedEvent.title}"
+                  </h2>
                   <p className="text-sm text-muted-foreground mb-2">{selectedEvent.description}</p>
                   <div className="text-xs text-muted-foreground mb-2">
                     <span className="font-semibold">Date:</span> {formatDate(selectedEvent.event_date)}
@@ -190,51 +206,32 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                 </section>
               )}
 
+              {/* Regular Events Grid */}
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6 mb-12">
                 {displayEvents.map((event) => (
                   <article
                     key={event.id}
                     className="rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow bg-white"
                   >
-                    {/* Card Image */}
-                    <div className="aspect-[4/3] overflow-hidden relative">
+                    <div className="aspect-[4/3] overflow-hidden">
                       <img
                         src={event.image || "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"}
                         alt={event.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
-                      {/* Event type badge */}
-                      <span
-                        className="absolute top-3 left-3 text-xs text-white px-2 py-1 rounded-full font-medium"
-                        style={{ backgroundColor: "#E8520A" }}
-                      >
-                        {event.event_type}
-                      </span>
                     </div>
-
-                    {/* Card Body */}
                     <div className="p-4">
-                      {/* Date */}
-                      <div
-                        className="flex items-center gap-1 text-xs mb-1"
-                        style={{ color: "#E8520A" }}
-                      >
+                      <div className="flex items-center gap-1 text-xs mb-1" style={{ color: "#E8520A" }}>
                         <Calendar className="h-3 w-3" />
                         <span>{formatDate(event.event_date)}</span>
                       </div>
-
-                      {/* Location */}
                       <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
                         <MapPin className="h-3 w-3" />
                         <span>{event.location}</span>
                       </div>
-
-                      {/* Title */}
                       <h2 className="font-semibold text-foreground text-sm leading-snug mb-1">
                         {event.title}
                       </h2>
-
-                      {/* Description */}
                       <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
                         {event.description}
                       </p>
@@ -243,43 +240,44 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
                 ))}
               </div>
 
+              {/* Past Knowledge Sessions */}
               <section className="mt-12 pt-8 border-t border-border">
-                <h2 className="text-2xl font-semibold mb-4">Past Knowledge Sessions</h2>
+                <h2 className="text-2xl font-semibold mb-6">Past Knowledge Sessions</h2>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {pastKnowledgeSessions.length > 0 ? (
-                    pastKnowledgeSessions.map((event) => (
-                      <article
-                        key={`knowledge-${event.id}`}
-                        className="rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow bg-white"
-                      >
-                        <div className="aspect-[4/3] overflow-hidden relative">
-                          <img
-                            src={event.image || "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"}
-                            alt={event.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          />
+                  {displayKnowledgeSessions.map((session) => (
+                    <article
+                      key={session.id}
+                      className="rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow bg-white"
+                    >
+                      {/* IMAGE FIX — object-contain so full image shows */}
+                      <div className="aspect-[4/3] overflow-hidden bg-white flex items-center justify-center">
+                        <img
+                          src={session.image}
+                          alt={session.title}
+                          className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center gap-1 text-xs mb-1" style={{ color: "#E8520A" }}>
+                          <Calendar className="h-3 w-3" />
+                          <span>{formatDate(session.session_date)}</span>
                         </div>
-                        <div className="p-4">
-                          <h3 className="font-semibold text-foreground text-sm leading-snug mb-1">
-                            {event.title}
-                          </h3>
-                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                            {event.description}
-                          </p>
-                          <Link
-                            href={`/news/events?show=${event.id}`}
-                            className="inline-flex items-center justify-center mt-3 rounded-md bg-[#E8520A] px-3 py-2 text-xs font-semibold text-white hover:bg-[#cc4600] transition-colors"
-                          >
-                            View More
-                          </Link>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                          <MapPin className="h-3 w-3" />
+                          <span>{session.location}</span>
                         </div>
-                      </article>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No past knowledge sessions available.</p>
-                  )}
+                        <h3 className="font-semibold text-foreground text-sm leading-snug mb-1">
+                          {session.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                          {session.description}
+                        </p>
+                      </div>
+                    </article>
+                  ))}
                 </div>
               </section>
+
             </div>
           </div>
         </div>

@@ -26,7 +26,6 @@ const navItems = [
     ],
   },
   { label: "MEMBERSHIP", href: "/membership" },
-  { label: "JOBS", href: "/jobs" },
 ]
 
 export function Header() {

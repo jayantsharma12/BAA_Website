@@ -50,26 +50,33 @@ const defaultEvents = [
 ]
 
 export async function EventsSection() {
-  const supabase = await createClient()
+  let displayEvents = defaultEvents
 
-  const { data: events } = await supabase
-    .from("events")
-    .select("*")
-    .order("event_date", { ascending: true })
-    .limit(10)
+  try {
+    const supabase = await createClient()
 
-  const displayEvents =
-    events && events.length > 0
-      ? events.map((e: any, i: number) => ({
-          id: e.id ?? i,
-          title: e.event_title ?? "Event",
-          description: e.event_description ?? "",
-          event_date: e.event_date ?? "",
-          location: e.event_location ?? "",
-          event_type: e.event_type ?? "Event",
-          image: e.event_image ?? defaultEvents[i % defaultEvents.length].image,
-        }))
-      : defaultEvents
+    const { data: events, error } = await supabase
+      .from("events")
+      .select("*")
+      .order("event_date", { ascending: true })
+      .limit(10)
+
+    if (error) {
+      console.error("Error fetching events:", error)
+    } else if (events && events.length > 0) {
+      displayEvents = events.map((e: any, i: number) => ({
+        id: e.id ?? i,
+        title: e.event_title ?? "Event",
+        description: e.event_description ?? "",
+        event_date: e.event_date ?? "",
+        location: e.event_location ?? "",
+        event_type: e.event_type ?? "Event",
+        image: e.event_image ?? defaultEvents[i % defaultEvents.length].image,
+      }))
+    }
+  } catch (err) {
+    console.error("Events fetch exception:", err)
+  }
 
   return (
     <section className="py-20 bg-muted overflow-hidden">

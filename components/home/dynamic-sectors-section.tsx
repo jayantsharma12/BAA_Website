@@ -17,17 +17,6 @@ const iconMap: Record<string, React.ReactNode> = {
   'shoe': <Package className="h-8 w-8" />,
 }
 
-const sectorImages: Record<string, string> = {
-  'shirt': 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'leaf': 'https://images.pexels.com/photos/1459505/pexels-photo-1459505.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'wrench': 'https://images.pexels.com/photos/210881/pexels-photo-210881.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'cpu': 'https://images.pexels.com/photos/343457/pexels-photo-343457.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'palette': 'https://images.pexels.com/photos/1762851/pexels-photo-1762851.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'pill': 'https://images.pexels.com/photos/356040/pexels-photo-356040.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'spoon': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=600',
-  'shoe': 'https://images.pexels.com/photos/292999/pexels-photo-292999.jpeg?auto=compress&cs=tinysrgb&w=600',
-}
-
 const defaultImage = 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600'
 
 interface Sector {
@@ -35,42 +24,59 @@ interface Sector {
   name: string
   description?: string
   icon_name?: string
+  image_url?: string
 }
 
-function WobbleCard({ children, containerClassName, image }: {
+function WobbleCard({ children, containerClassName, image, icon }: {
   children: React.ReactNode
   containerClassName?: string
   image: string
+  icon?: React.ReactNode
 }) {
-  const [transform, setTransform] = useState('translate3d(0,0,0)')
+  const [hovered, setHovered] = useState(false)
+  const [transform, setTransform] = useState('translate3d(0,0,0) scale(1)')
   const [innerTransform, setInnerTransform] = useState('translate3d(0,0,0)')
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const x = ((e.clientX - (rect.left + rect.width / 2)) / 20).toFixed(1)
     const y = ((e.clientY - (rect.top + rect.height / 2)) / 20).toFixed(1)
-    setTransform(`translate3d(${x}px, ${y}px, 0)`)
+    setTransform(`translate3d(${x}px, ${y}px, 0) scale(1.08)`)
     setInnerTransform(`translate3d(${-Number(x)}px, ${-Number(y)}px, 0) scale3d(1.03,1.03,1)`)
   }
 
   const handleMouseLeave = () => {
-    setTransform('translate3d(0,0,0)')
+    setHovered(false)
+    setTransform('translate3d(0,0,0) scale(1)')
     setInnerTransform('translate3d(0,0,0)')
+  }
+
+  const handleMouseEnter = () => {
+    setHovered(true)
   }
 
   return (
     <div
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ transform, transition: 'transform 0.1s ease-out' }}
-      className={cn('flex-shrink-0 w-[260px] md:w-[280px] rounded-2xl overflow-hidden cursor-pointer relative group', containerClassName)}
+      onMouseEnter={handleMouseEnter}
+      style={{
+        transform,
+        transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        zIndex: hovered ? 50 : 1,
+        position: 'relative',
+      }}
+      className={cn('flex-shrink-0 w-[260px] md:w-[280px] rounded-2xl overflow-hidden cursor-pointer group', containerClassName)}
     >
       <img
         src={image}
         alt=""
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-black/55" />
+      {/* Halka sa shadow/overlay */}
+      <div className="absolute inset-0 bg-black/25" />
+
+      {/* Animated Content */}
       <div
         style={{ transform: innerTransform, transition: 'transform 0.1s ease-out' }}
         className="relative z-10 h-full px-6 py-10"
@@ -95,12 +101,22 @@ export function DynamicSectorsSection() {
         const supabase = createClient()
         const { data, error } = await supabase
           .from('sectors')
-          .select('id, name, description, icon_name')
+          .select('id, name, description, icon_name, image_url')
           .order('order_index', { ascending: true })
-        if (error) { console.error('[v0] Error fetching sectors:', error); return }
-        setSectors(data || [])
+        
+        if (error) {
+          console.error('Error fetching sectors:', error)
+          return
+        }
+
+        if (data && data.length > 0) {
+          console.log('Sectors fetched successfully:', data.length)
+          setSectors(data)
+        } else {
+          console.warn('No sectors found in database')
+        }
       } catch (err) {
-        console.error('[v0] Error in fetchSectors:', err)
+        console.error('Exception in fetchSectors:', err)
       } finally {
         setLoading(false)
       }
@@ -139,34 +155,13 @@ export function DynamicSectorsSection() {
   return (
     <section className="py-12 md:py-16 bg-background overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-        {/* Centered heading with horizontal lines — same as benefits */}
+        {/* Heading only */}
         <div className="flex items-center gap-4 mb-10">
           <div className="flex-1 h-px bg-border" />
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground whitespace-nowrap">
-            Sectors We Serve
+            Sectors Our Members Work With
           </h2>
           <div className="flex-1 h-px bg-border" />
-        </div>
-
-        {/* Arrow buttons */}
-        <div className="flex justify-center gap-3 mb-8">
-          <Button
-            size="icon"
-            variant="outline"
-            className="rounded-full w-9 h-9 border-foreground/30"
-            onClick={() => scroll('left')}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            size="icon"
-            variant="outline"
-            className="rounded-full w-9 h-9 border-foreground/30"
-            onClick={() => scroll('right')}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
@@ -184,13 +179,11 @@ export function DynamicSectorsSection() {
           {items.map((sector, i) => (
             <WobbleCard
               key={`${sector.id}-${i}`}
-              image={sectorImages[sector.icon_name || ''] || defaultImage}
+              image={sector.image_url || defaultImage}
               containerClassName="min-h-[220px]"
+              icon={iconMap[sector.icon_name || 'leaf'] || iconMap['leaf']}
             >
               <div className="flex flex-col items-start gap-3">
-                <div className="text-white/90">
-                  {iconMap[sector.icon_name || 'leaf'] || iconMap['leaf']}
-                </div>
                 <h3 className="text-white font-bold text-lg">{sector.name}</h3>
                 {sector.description && (
                   <p className="text-white/80 text-sm leading-relaxed">{sector.description}</p>
@@ -199,6 +192,26 @@ export function DynamicSectorsSection() {
             </WobbleCard>
           ))}
         </div>
+      </div>
+
+      {/* Arrow buttons — below the cards */}
+      <div className="flex justify-center gap-3 mt-8">
+        <Button
+          size="icon"
+          variant="outline"
+          className="rounded-full w-9 h-9 border-foreground/30"
+          onClick={() => scroll('left')}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        <Button
+          size="icon"
+          variant="outline"
+          className="rounded-full w-9 h-9 border-foreground/30"
+          onClick={() => scroll('right')}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
     </section>
   )

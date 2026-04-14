@@ -16,25 +16,6 @@ export default async function GoverningBodyPage() {
     .select("*")
     .order("sort_order", { ascending: true })
 
-  const defaultMembers = [
-    { id: 1, name: "Mrs. Mandira Malik", designation: "Chairperson", image_url: "https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg" },
-    { id: 2, name: "Mr. Sumit Chhabra", designation: "Vice Chairman", image_url: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg" },
-    { id: 3, name: "Mr. Nitin Mohan", designation: "Vice Chairman", image_url: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg" },
-    { id: 4, name: "Ms. Anchal Kansal", designation: "General Secretary", image_url: "https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg" },
-    { id: 5, name: "Mr. Michael Vinod", designation: "Joint Secretary", image_url: "https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg" },
-    { id: 6, name: "Mr. Sanjay Khurana", designation: "Treasurer", image_url: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg" },
-    { id: 7, name: "Mr. Vinamra Gehlot", designation: "Addtl Treasurer", image_url: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg" },
-    { id: 8, name: "Mrs. Christine E. Rai", designation: "GB Member", image_url: "https://images.pexels.com/photos/3767392/pexels-photo-3767392.jpeg" },
-    { id: 9, name: "Mr. Rakesh Kumar", designation: "GB Member", image_url: "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg" },
-    { id: 10, name: "Ms. Tanya Bhatia", designation: "GB Member", image_url: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg" },
-    { id: 11, name: "Mr. Pramod Rana", designation: "GB Member", image_url: "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg" },
-    { id: 12, name: "Mr. Sanjeev Jain", designation: "GB Member", image_url: "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg" },
-    { id: 13, name: "Mr. Avdhesh Agarwal", designation: "Institutional Member", image_url: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg" },
-    { id: 14, name: "Mr. Raj Kumar Malhotra", designation: "Institutional Member (FRD)", image_url: "https://images.pexels.com/photos/2269872/pexels-photo-2269872.jpeg" },
-    { id: 15, name: "Mr. Manoj Rana", designation: "Special Invitee", image_url: "https://images.pexels.com/photos/936019/pexels-photo-936019.jpeg" },
-    { id: 16, name: "Ms. Rohini Suri", designation: "Special Invitee", image_url: "https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg" },
-  ]
-
   const displayMembers =
     members && members.length > 0
       ? members.map((m: any, i: number) => ({
@@ -43,8 +24,7 @@ export default async function GoverningBodyPage() {
           designation: m.designation ?? "",
           image_url: m.photo ?? "",
         }))
-      : defaultMembers
-
+      : []                  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -110,7 +90,7 @@ export default async function GoverningBodyPage() {
                       <p className="text-xs font-bold text-foreground uppercase tracking-wide">
                         {member.name}
                       </p>
-                      <p className="text-xs font-semibold uppercase tracking-wide mt-0.5 text-foreground/80">
+                      <p className="text-xs font-semibold uppercase tracking-wide mt-0.5" style={{ color: "#E8520A" }}>
                         {member.designation}
                       </p>
                     </div>

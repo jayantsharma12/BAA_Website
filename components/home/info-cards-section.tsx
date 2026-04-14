@@ -95,25 +95,9 @@ export async function InfoCardsSection() {
               key={card.id}
               className="group border-l-4 border-primary bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 rounded-r-xl p-6"
             >
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white">
-                {iconMap[card.icon] || <Users className="h-6 w-6" />}
-              </div>
               <p className="text-white text-sm leading-relaxed font-medium">
-                {card.title}
+                {card.description || card.title}
               </p>
-              {card.description ? (
-                <p className="mt-2 text-white/75 text-xs leading-relaxed">
-                  {card.description}
-                </p>
-              ) : null}
-              {card.link_url && (
-                <Link
-                  href={card.link_url}
-                  className="mt-4 inline-flex items-center gap-1 text-primary text-xs hover:gap-2 transition-all"
-                >
-                  {card.link_text} <ArrowRight className="h-3 w-3" />
-                </Link>
-              )}
             </div>
           ))}
         </div>

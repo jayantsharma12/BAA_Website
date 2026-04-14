@@ -2,9 +2,8 @@
 
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Calendar, MapPin, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
-import { useRef } from "react"
+import { Calendar, MapPin, ArrowRight } from "lucide-react"
+import { useEffect, useState, useRef } from "react"
 
 type Event = {
   id: number
@@ -27,8 +26,8 @@ const formatDate = (dateString: string) => {
 
 function EventCard({ event }: { event: Event }) {
   return (
-    <div className="flex-shrink-0 w-[300px] md:w-[340px] rounded-xl overflow-hidden border border-border bg-card shadow-sm hover:shadow-lg transition-shadow duration-300 group">
-      <div className="relative h-48 overflow-hidden">
+    <div className="flex-shrink-0 w-[320px] rounded-xl overflow-hidden border border-border bg-card shadow-sm hover:shadow-lg transition-shadow duration-300 group">
+      <div className="relative h-64 overflow-hidden">
         <img
           src={event.image}
           alt={event.title}
@@ -44,9 +43,6 @@ function EventCard({ event }: { event: Event }) {
         <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-2">
           {event.title}
         </h3>
-        <p className="text-sm text-muted-foreground line-clamp-2">
-          {event.description}
-        </p>
         <div className="space-y-1.5 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
@@ -69,61 +65,46 @@ function EventCard({ event }: { event: Event }) {
 }
 
 export function InfiniteScroller({ events }: { events: Event[] }) {
+  const [paused, setPaused] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const animRef = useRef<number>(0)
+  const posRef = useRef(0)
 
-  const scroll = (dir: 'left' | 'right') => {
-    if (!scrollRef.current) return
-    scrollRef.current.scrollBy({
-      left: dir === 'right' ? 360 : -360,
-      behavior: 'smooth',
-    })
-  }
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el || events.length === 0) return
+
+    const speed = 0.3
+    const animate = () => {
+      if (!paused) {
+        posRef.current += speed
+        const singleWidth = el.scrollWidth / 3
+        if (posRef.current >= singleWidth) posRef.current = 0
+        el.style.transform = `translateX(-${posRef.current}px)`
+      }
+      animRef.current = requestAnimationFrame(animate)
+    }
+
+    animRef.current = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(animRef.current)
+  }, [paused, events])
+
+  const items = [...events, ...events, ...events]
 
   return (
-    <div>
-      {/* Arrow buttons — center mein */}
-      <div className="flex justify-center gap-3 mb-6">
-        <Button
-          size="icon"
-          variant="outline"
-          className="rounded-full w-9 h-9"
-          onClick={() => scroll('left')}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          className="rounded-full w-9 h-9"
-          onClick={() => scroll('right')}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-
-      {/* Scrollable cards */}
-      <div className="overflow-hidden">
-        <div
-          ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scroll-smooth"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-          }}
-        >
-          {events.map((event, i) => (
-            <EventCard key={`${event.id}-${i}`} event={event} />
-          ))}
-        </div>
-      </div>
-
-      {/* View All Events */}
-      <div className="text-center mt-8">
-        <Button asChild className="bg-primary text-white hover:bg-primary/90 px-8 rounded-full">
-          <Link href="/news/events">
-            View All Events <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
+    <div
+      className="overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div
+        ref={scrollRef}
+        className="flex gap-6 will-change-transform"
+        style={{ width: 'max-content' }}
+      >
+        {items.map((event, i) => (
+          <EventCard key={`${event.id}-${i}`} event={event} />
+        ))}
       </div>
     </div>
   )

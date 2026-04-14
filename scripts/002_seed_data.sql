@@ -11,7 +11,8 @@ INSERT INTO site_settings (key, value) VALUES
 ('hero_image', 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg'),
 ('facebook_url', 'https://facebook.com/buyingagents'),
 ('twitter_url', 'https://twitter.com/buyingagents'),
-('linkedin_url', 'https://linkedin.com/company/buyingagents')
+('linkedin_url', 'https://linkedin.com/company/buyingagents'),
+('instagram_url', 'https://instagram.com/buyingagents')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 
 -- Seed Statistics

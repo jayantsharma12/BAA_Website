@@ -1,6 +1,10 @@
+'use client'
+
 import Link from "next/link"
 import Image from "next/image"
 import { Mail, Phone, Facebook, Linkedin, Instagram, Twitter } from "lucide-react"
+import { useEffect, useState } from "react"
+import { createClient } from "@/lib/supabase/client"
 
 const quickLinks = [
   { label: "About us", href: "/about" },
@@ -10,9 +14,73 @@ const quickLinks = [
   { label: "Contact Us", href: "/contact" },
 ]
 
+interface SocialLinks {
+  facebook: string | null
+  linkedin: string | null
+  instagram: string | null
+  twitter: string | null
+}
+
 export function Footer() {
+  const [socialLinks, setSocialLinks] = useState<SocialLinks>({
+    facebook: null,
+    linkedin: null,
+    instagram: null,
+    twitter: null,
+  })
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchSocialLinks = async () => {
+      try {
+        const supabase = createClient()
+        
+        // Fetch all site_settings
+        const { data, error } = await supabase
+          .from('site_settings')
+          .select('key, value')
+
+        if (error) {
+          console.error('Error fetching social links:', error)
+          setIsLoading(false)
+          return
+        }
+
+        // Map the results to our state object
+        const links: SocialLinks = {
+          facebook: null,
+          linkedin: null,
+          instagram: null,
+          twitter: null,
+        }
+
+        if (data) {
+          data.forEach((item) => {
+            if (item.key === 'facebook_url') {
+              links.facebook = item.value
+            } else if (item.key === 'linkedin_url') {
+              links.linkedin = item.value
+            } else if (item.key === 'instagram_url') {
+              links.instagram = item.value
+            } else if (item.key === 'twitter_url') {
+              links.twitter = item.value
+            }
+          })
+        }
+
+        setSocialLinks(links)
+      } catch (error) {
+        console.error('Error fetching social links:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchSocialLinks()
+  }, [])
+
   return (
-    <footer style={{ backgroundColor: "#1a1a1a", color: "#e5e5e5" }}>
+    <footer style={{ backgroundColor: "#636161", color: "#e5e5e5" }}>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between gap-10">
           {/* Left: Quick Links */}
@@ -64,38 +132,54 @@ export function Footer() {
             </div>
             {/* Social Icons */}
             <div className="flex gap-3">
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
-                style={{ backgroundColor: "#333333" }}
-              >
-                <Facebook className="h-4 w-4 text-white" />
-                <span className="sr-only">Facebook</span>
-              </Link>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
-                style={{ backgroundColor: "#333333" }}
-              >
-                <Linkedin className="h-4 w-4 text-white" />
-                <span className="sr-only">LinkedIn</span>
-              </Link>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
-                style={{ backgroundColor: "#333333" }}
-              >
-                <Instagram className="h-4 w-4 text-white" />
-                <span className="sr-only">Instagram</span>
-              </Link>
-              <Link
-                href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
-                style={{ backgroundColor: "#333333" }}
-              >
-                <Twitter className="h-4 w-4 text-white" />
-                <span className="sr-only">X / Twitter</span>
-              </Link>
+              {socialLinks.facebook && (
+                <a
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
+                  style={{ backgroundColor: "#706d6d" }}
+                >
+                  <Facebook className="h-4 w-4 text-white" />
+                  <span className="sr-only">Facebook</span>
+                </a>
+              )}
+              {socialLinks.linkedin && (
+                <a
+                  href={socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
+                  style={{ backgroundColor: "#777474" }}
+                >
+                  <Linkedin className="h-4 w-4 text-white" />
+                  <span className="sr-only">LinkedIn</span>
+                </a>
+              )}
+              {socialLinks.instagram && (
+                <a
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
+                  style={{ backgroundColor: "#777777" }}
+                >
+                  <Instagram className="h-4 w-4 text-white" />
+                  <span className="sr-only">Instagram</span>
+                </a>
+              )}
+              {socialLinks.twitter && (
+                <a
+                  href={socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:opacity-80"
+                  style={{ backgroundColor: "#707070" }}
+                >
+                  <Twitter className="h-4 w-4 text-white" />
+                  <span className="sr-only">X / Twitter</span>
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -103,7 +187,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div
           className="mt-8 pt-6 text-center text-xs"
-          style={{ borderTop: "1px solid #333333", color: "#888888" }}
+          style={{ borderTop: "1px solid #7b7979", color: "#888888" }}
         >
           &copy; {new Date().getFullYear()} B.A.A. All Rights Reserved
         </div>
