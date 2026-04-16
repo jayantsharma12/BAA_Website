@@ -184,9 +184,9 @@ export function DynamicSectorsSection() {
               icon={iconMap[sector.icon_name || 'leaf'] || iconMap['leaf']}
             >
               <div className="flex flex-col items-start gap-3">
-                <h3 className="text-white font-bold text-lg">{sector.name}</h3>
+                <h3 className="text-white font-bold text-lg" style={{textShadow: '0 2px 8px rgba(0,0,0,0.8)'}}>{sector.name}</h3>
                 {sector.description && (
-                  <p className="text-white/80 text-sm leading-relaxed">{sector.description}</p>
+                  <p className="text-white/90 text-sm leading-relaxed" style={{textShadow: '0 1px 6px rgba(0,0,0,0.8)'}}>{sector.description}</p>
                 )}
               </div>
             </WobbleCard>

@@ -27,8 +27,8 @@ const slides: Slide[] = [
   {
     id: 1,
     type: "globe",
-    title: "Supporting Members\nSince 1946",
-    subtitle: "Over seven decades of championing the rights and interests of buying agents across every major industry sector.",
+    title: "Supporting Members\nSince 2016",
+    subtitle: "Over 10+ years of championing the rights and interests of buying agents across every major industry sector.",
     bgImage: "https://images.pexels.com/photos/4481259/pexels-photo-4481259.jpeg?auto=compress&cs=tinysrgb&w=1920",
   },
   {
@@ -41,7 +41,7 @@ const slides: Slide[] = [
   {
     id: 3,
     type: "diamond",
-    title: "Connecting Buyers &\nSellers Globally",
+    title: "Connecting the Buying agents\n Community",
     subtitle: "Bridging the gap between international buyers and Indian exporters with trust, expertise, and decades of industry knowledge.",
     bgImage: "https://images.pexels.com/photos/1427107/pexels-photo-1427107.jpeg?auto=compress&cs=tinysrgb&w=1920",
   },
@@ -316,8 +316,9 @@ function IndiaMapVisual() {
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setHoveredState(null)}
         style={{
-          width: "min(100%, 400px)",
-          aspectRatio: "4 / 5",
+          width: "min(100%, 500px)",
+          height: "auto",
+          minHeight: "480px",
           animation: "fadeUp 0.10s ease forwards",
         }}
       >
@@ -325,8 +326,8 @@ function IndiaMapVisual() {
   src="/images/india-map.png"
   alt="India Map"
   style={{
-    width: "min(100%, 520px)",
-    height: "100%",
+    width: "100%",
+    height: "auto",
     objectFit: "contain",
     filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.5))",
     display: "block",

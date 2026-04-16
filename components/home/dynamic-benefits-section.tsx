@@ -15,34 +15,34 @@ const iconMap: Record<string, React.ElementType> = {
 
 const cardStyles = [
   {
-    bg: "bg-gradient-to-br from-[#f5f0ec] to-[#e8ddd4]",
+    bg: "bg-white",
     iconBg: "bg-[#7a5a46]/15", iconColor: "text-[#7a5a46]",
-    title: "text-[#4a3428]", desc: "text-[#6b4e3d]",
+    title: "text-[#1a1a1a]", desc: "text-[#666666]",
   },
   {
-    bg: "bg-gradient-to-br from-[#fff4ef] to-[#fde3d5]",
+    bg: "bg-white",
     iconBg: "bg-[#E8520A]/12", iconColor: "text-[#E8520A]",
-    title: "text-[#7a2800]", desc: "text-[#9b4020]",
+    title: "text-[#1a1a1a]", desc: "text-[#666666]",
   },
   {
-    bg: "bg-gradient-to-br from-[#f2ede8] to-[#ddd0c5]",
+    bg: "bg-white",
     iconBg: "bg-[#644e3c]/15", iconColor: "text-[#644e3c]",
-    title: "text-[#3d2a1e]", desc: "text-[#60412f]",
+    title: "text-[#1a1a1a]", desc: "text-[#666666]",
   },
   {
-    bg: "bg-gradient-to-br from-[#fff8f5] to-[#fce9df]",
-    iconBg: "bg-[#E8520A]/10", iconColor: "text-[#c94700]",
-    title: "text-[#6b2a00]", desc: "text-[#8c3c10]",
+    bg: "bg-white",
+    iconBg: "bg-[#E8520A]/10", iconColor: "text-[#E8520A]",
+    title: "text-[#1a1a1a]", desc: "text-[#666666]",
   },
   {
-    bg: "bg-gradient-to-br from-[#ede7e1] to-[#d4c5ba]",
+    bg: "bg-white",
     iconBg: "bg-[#5a4132]/15", iconColor: "text-[#5a4132]",
-    title: "text-[#3a2418]", desc: "text-[#5a3c2a]",
+    title: "text-[#1a1a1a]", desc: "text-[#666666]",
   },
   {
-    bg: "bg-gradient-to-br from-[#fef1eb] to-[#f9d9c8]",
-    iconBg: "bg-[#E8520A]/13", iconColor: "text-[#d04800]",
-    title: "text-[#5c2200]", desc: "text-[#7d3515]",
+    bg: "bg-white",
+    iconBg: "bg-[#E8520A]/13", iconColor: "text-[#E8520A]",
+    title: "text-[#1a1a1a]", desc: "text-[#666666]",
   },
 ]
 
@@ -109,7 +109,7 @@ export async function DynamicBenefitsSection() {
                 className="animate-rise-in"
                 style={{ animationDelay: `${index * 120}ms` }}
               >
-                <div className={`flex flex-col items-start gap-3 rounded-2xl p-6 h-full border border-black/[0.06] ${style.bg}`}>
+                <div className={`flex flex-col items-start gap-3 rounded-2xl p-6 h-full border-2 border-[#DDDDDD] ${style.bg}`}>
                   <div className={`w-14 h-14 rounded-full flex items-center justify-center ${style.iconBg}`}>
                     <Icon className={`h-6 w-6 ${style.iconColor}`} strokeWidth={1.5} />
                   </div>

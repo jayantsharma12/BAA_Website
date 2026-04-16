@@ -63,6 +63,8 @@ CREATE TABLE public.notices (
   description TEXT,
   date DATE NOT NULL,
   image TEXT,
+  type VARCHAR(50) DEFAULT 'other',  -- 'knowledge', 'event', or 'other'
+  form_url TEXT,  -- Registration form link for knowledge sessions
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -173,6 +175,7 @@ CREATE INDEX idx_events_event_date ON public.events(event_date);
 CREATE INDEX idx_events_is_active ON public.events(is_active);
 CREATE INDEX idx_sectors_order_index ON public.sectors(order_index);
 CREATE INDEX idx_notices_date ON public.notices(date);
+CREATE INDEX idx_notices_type ON public.notices(type);
 CREATE INDEX idx_media_coverage_date ON public.media_coverage(date);
 CREATE INDEX idx_jobs_is_active ON public.jobs(is_active);
 CREATE INDEX idx_jobs_posted_at ON public.jobs(posted_at);
@@ -188,7 +191,7 @@ CREATE INDEX idx_committees_display_order ON public.committees(display_order);
 -- Events: 3 records (AGM, Export Summit, Networking)
 -- Benefits: 6 records (Industry Advocacy, Networking, Training, etc.)
 -- Sectors: 8 records ⭐ NEW (Textiles, Agriculture, Engineering, etc.)
--- Notices: 6 records (Announcements & circulars)
+-- Notices: 9 records ⭐ UPDATED (3 knowledge sessions, 3 events, 3 other notices with type & form_url)
 -- Media Coverage: 3 records (Press articles)
 -- Jobs: 6 records (Career opportunities)
 -- Governing Body: 16 records (Leadership team)
@@ -204,12 +207,16 @@ CREATE INDEX idx_committees_display_order ON public.committees(display_order);
 -- INSERT INTO public.sectors (name, description, icon_name, order_index)
 -- VALUES ('New Sector', 'Description here', 'icon_name', 10);
 
--- Example: Add a new notice
--- INSERT INTO public.notices (title, description, date, image)
--- VALUES ('Notice Title', 'Description', NOW()::date, 'https://images.pexels.com/...');
+-- Example: Add a knowledge session notice with registration form
+-- INSERT INTO public.notices (title, description, date, image, type, form_url)
+-- VALUES ('Session Title', 'Description', NOW()::date, 'https://images...', 'knowledge', 'https://forms.gle/...');
 
--- Example: Add a new job
--- INSERT INTO public.jobs (title, company, location, job_type, is_active)
--- VALUES ('Job Title', 'Company', 'City', 'Full-time', true);
+-- Example: Add an event notice
+-- INSERT INTO public.notices (title, description, date, image, type, form_url)
+-- VALUES ('Event Title', 'Description', NOW()::date, 'https://images...', 'event', NULL);
+
+-- Example: Add other notices
+-- INSERT INTO public.notices (title, description, date, image, type)
+-- VALUES ('Notice Title', 'Description', NOW()::date, 'https://images...', 'other');
 
 -- All new records automatically appear on the website!

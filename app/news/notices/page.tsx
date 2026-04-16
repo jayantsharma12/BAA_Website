@@ -9,89 +9,6 @@ export const metadata = {
   description: "Stay updated with the latest notices and announcements from the Buying Agents Association.",
 }
 
-const defaultNotices = [
-  // Knowledge sessions (3 sample cards)
-  {
-    id: 1,
-    type: "knowledge",
-    title: "Orientation for New Members",
-    description: "Orientation session for all new members. Attendance mandatory.",
-    date: "2025-01-10",
-    image: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg",
-    formUrl: "https://forms.gle/example-orientation", // Google Form link
-  },
-  {
-    id: 2,
-    type: "knowledge",
-    title: "Digital Records & Compliance Session",
-    description: "Learn the latest compliance workflows for digital export documentation.",
-    date: "2025-01-20",
-    image: "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg",
-    formUrl: "https://forms.gle/example-compliance-session", // Google Form link
-  },
-  {
-    id: 3,
-    type: "knowledge",
-    title: "Import/Export Documentation Workshop",
-    description: "Interactive workshop on best practices for import/export compliance.",
-    date: "2025-01-25",
-    image: "https://images.pexels.com/photos/3184370/pexels-photo-3184370.jpeg",
-    formUrl: "https://forms.gle/example-documentation-workshop", // Google Form link
-  },
-
-  // Upcoming events (3 sample cards)
-  {
-    id: 4,
-    type: "event",
-    title: "Annual General Meeting 2025",
-    description: "All members are notified of the AGM for the year 2025 at New Delhi Trade Center.",
-    date: "2025-02-05",
-    image: "https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg",
-  },
-  {
-    id: 5,
-    type: "event",
-    title: "Regional Buyer-Seller Meet",
-    description: "Connecting buyers and sellers for new partnership opportunities.",
-    date: "2025-02-12",
-    image: "https://images.pexels.com/photos/3184326/pexels-photo-3184326.jpeg",
-  },
-  {
-    id: 6,
-    type: "event",
-    title: "Trade Expo 2025",
-    description: "Join the BAA delegation at the upcoming national trade expo.",
-    date: "2025-02-18",
-    image: "https://images.pexels.com/photos/1181346/pexels-photo-1181346.jpeg",
-  },
-
-  // Other notices (3 sample cards)
-  {
-    id: 7,
-    type: "other",
-    title: "Updated Membership Fee Structure",
-    description: "The governing body has approved the revised membership fee structure effective from April 2025.",
-    date: "2025-02-22",
-    image: "https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg",
-  },
-  {
-    id: 8,
-    type: "other",
-    title: "New Trade Policy Guidelines",
-    description: "Ministry of Commerce released new guidelines for export procedures. All members must review.",
-    date: "2025-03-01",
-    image: "https://images.pexels.com/photos/1181346/pexels-photo-1181346.jpeg",
-  },
-  {
-    id: 9,
-    type: "other",
-    title: "Call for Nominations — Committee Members",
-    description: "Nominations are invited for positions in various BAA committees for the term 2025–2027.",
-    date: "2025-03-10",
-    image: "https://images.pexels.com/photos/3182746/pexels-photo-3182746.jpeg",
-  },
-]
-
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   return date.toLocaleDateString("en-IN", {
@@ -104,29 +21,35 @@ const formatDate = (dateString: string) => {
 export default async function NoticesPage() {
   const supabase = await createClient()
 
-  const { data: notices } = await supabase
+  // Fetch all notices from database
+  const { data: allNotices } = await supabase
     .from("notices")
     .select("*")
     .order("date", { ascending: false })
 
-  const dbNotices = notices && notices.length > 0 ? notices : []
+  const notices = allNotices || []
 
-  const normalizedDbNotices = dbNotices.map((notice) => ({
-    type: (notice as any).type || "other",
-    ...notice,
-  }))
+  // Filter notices by type
+  const knowledgeSessions = notices
+    .filter((notice) => notice.type === "knowledge")
+    .map((notice) => ({
+      ...notice,
+      formUrl: notice.form_url,
+    }))
 
-  const dbKnowledge = normalizedDbNotices.filter(
-    (notice) => notice.type === "knowledge",
-  )
-  const dbEvents = normalizedDbNotices.filter((notice) => notice.type === "event")
-  const dbOther = normalizedDbNotices.filter(
-    (notice) => !["knowledge", "event"].includes(notice.type),
-  )
+  const upcomingEvents = notices
+    .filter((notice) => notice.type === "event")
+    .map((notice) => ({
+      ...notice,
+      formUrl: notice.form_url,
+    }))
 
-  const knowledgeSessions = [...dbKnowledge, ...defaultNotices.filter((n) => n.type === "knowledge")].slice(0, 3)
-  const upcomingEvents = [...dbEvents, ...defaultNotices.filter((n) => n.type === "event")].slice(0, 3)
-  const otherNotices = [...dbOther, ...defaultNotices.filter((n) => n.type === "other")].slice(0, 3)
+  const otherNotices = notices
+    .filter((notice) => notice.type === "other")
+    .map((notice) => ({
+      ...notice,
+      formUrl: notice.form_url,
+    }))
 
 
   return (
@@ -222,35 +145,44 @@ export default async function NoticesPage() {
                   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {upcomingEvents.length > 0 ? (
                       upcomingEvents.map((notice) => (
-                        <Link key={notice.id} href="/news/events">
-                          <article className="rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow bg-white cursor-pointer">
-                            <div className="aspect-[4/3] overflow-hidden">
-                              <img
-                                src={
-                                  notice.image ||
-                                  "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"
-                                }
-                                alt={notice.title}
-                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                              />
+                        <article
+                          key={notice.id}
+                          className="rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow bg-white"
+                        >
+                          <div className="aspect-[4/3] overflow-hidden">
+                            <img
+                              src={
+                                notice.image ||
+                                "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"
+                              }
+                              alt={notice.title}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="p-4">
+                            <div
+                              className="flex items-center gap-1 text-xs mb-2"
+                              style={{ color: "#E8520A" }}
+                            >
+                              <Calendar className="h-3 w-3" />
+                              <span>{formatDate(notice.date)}</span>
                             </div>
-                            <div className="p-4">
-                              <div
-                                className="flex items-center gap-1 text-xs mb-2"
-                                style={{ color: "#E8520A" }}
-                              >
-                                <Calendar className="h-3 w-3" />
-                                <span>{formatDate(notice.date)}</span>
-                              </div>
-                              <h2 className="font-semibold text-foreground text-sm leading-snug mb-1">
-                                {notice.title}
-                              </h2>
-                              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
-                                {notice.description}
-                              </p>
-                            </div>
-                          </article>
-                        </Link>
+                            <h2 className="font-semibold text-foreground text-sm leading-snug mb-1">
+                              {notice.title}
+                            </h2>
+                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
+                              {notice.description}
+                            </p>
+                            <a
+                              href={notice.formUrl || "https://forms.gle"}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center justify-center mt-4 w-full rounded-md bg-[#E8520A] px-3 py-2 text-xs font-semibold text-white hover:bg-[#cc4600] transition-colors"
+                            >
+                              Register Now
+                            </a>
+                          </div>
+                        </article>
                       ))
                     ) : (
                       <p className="text-sm text-muted-foreground">No upcoming events available.</p>

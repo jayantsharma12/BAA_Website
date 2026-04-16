@@ -3,6 +3,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { CheckCircle, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import MembershipPageClient from "./page-client"
 
 export const metadata = {
   title: "Membership | Buying Agents Association",
@@ -13,6 +14,8 @@ const membershipTiers = [
   {
     name: "Associate Member",
     description: "Perfect for new buying agents entering the industry",
+    joiningFee: "INR 5,000",
+    annualFee: "INR 2,500",
     features: [
       "Access to member directory",
       "Quarterly newsletter",
@@ -23,8 +26,10 @@ const membershipTiers = [
     highlighted: false,
   },
   {
-    name: "Full Member",
+    name: "Member",
     description: "Ideal for established buying agents seeking growth",
+    joiningFee: "INR 10,000",
+    annualFee: "INR 5,000",
     features: [
       "All Associate benefits",
       "Voting rights in AGM",
@@ -35,6 +40,22 @@ const membershipTiers = [
       "Business matchmaking services",
     ],
     highlighted: true,
+  },
+  {
+    name: "Institutional Member",
+    description: "For organizations and corporate entities",
+    joiningFee: "INR 15,000",
+    annualFee: "INR 7,500",
+    features: [
+      "All Member benefits",
+      "Multiple authorized representatives",
+      "Dedicated account manager",
+      "Bulk training program access",
+      "Corporate event sponsorship opportunities",
+      "Priority support",
+      "Custom research reports",
+    ],
+    highlighted: false,
   },
 ]
 
@@ -85,7 +106,7 @@ export default function MembershipPage() {
               </p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
+            <div className="grid gap-6 md:grid-cols-3 w-full max-w-7xl mx-auto">
               {membershipTiers.map((tier) => (
                 <div
                   key={tier.name}
@@ -109,6 +130,21 @@ export default function MembershipPage() {
                     {tier.name}
                   </h3>
                   <p className="text-muted-foreground text-sm mb-6">{tier.description}</p>
+                  
+                  {/* Pricing */}
+                  <div className="mb-6 pb-6 border-b border-gray-200">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Joining Fee</p>
+                        <p className="text-lg font-bold text-foreground">{tier.joiningFee}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Annual Fee</p>
+                        <p className="text-lg font-bold text-foreground">{tier.annualFee}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <ul className="space-y-3 mb-8 flex-1">
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2">
@@ -120,21 +156,7 @@ export default function MembershipPage() {
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    asChild
-                    className="w-full rounded-full font-semibold"
-                    style={
-                      tier.highlighted
-                        ? { backgroundColor: "#E8520A", color: "#fff" }
-                        : {}
-                    }
-                    variant={tier.highlighted ? "default" : "outline"}
-                  >
-                    <Link href="/contact">
-                      Apply Now
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <MembershipPageClient tier={tier.name} />
                 </div>
               ))}
             </div>
