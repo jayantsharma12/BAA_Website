@@ -58,13 +58,15 @@ export async function EventsSection() {
     const { data: events, error } = await supabase
       .from("events")
       .select("*")
-      .order("event_date", { ascending: true })
-      .limit(10)
+      .order("event_date", { ascending: false })
 
     if (error) {
       console.error("Error fetching events:", error)
     } else if (events && events.length > 0) {
-      displayEvents = events.map((e: any, i: number) => ({
+      // Get only the 5 most recent events for the moving carousel
+      const recentEvents = events.slice(0, 5)
+      
+      displayEvents = recentEvents.map((e: any, i: number) => ({
         id: e.id ?? i,
         title: e.event_title ?? "Event",
         description: e.event_description ?? "",

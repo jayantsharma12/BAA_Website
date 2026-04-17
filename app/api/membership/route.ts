@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({
         from: "noreply@baa.org.in",
         to: "info@baa.org.in",
-        cc: "gs@baa.org.in",
+        cc: "harshita.chauhan@axondevelopers.com",
         replyTo: email,
         subject: `New Membership Application - ${fullName}`,
         html: emailContent,
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       await transporter.sendMail({
         from: process.env.EMAIL_FROM || "noreply@baa.org.in",
         to: "info@baa.org.in",
-        cc: "gs@baa.org.in",
+        cc: "harshita.chauhan@axondevelopers.com",
         subject: `New Membership Application - ${fullName}`,
         html: emailContent,
         replyTo: email,

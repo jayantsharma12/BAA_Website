@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, X } from "lucide-react"
-import { MembershipForm } from "@/components/membership-form"
+import { MembershipFormComprehensive } from "@/components/membership-form-comprehensive"
 
 interface MembershipPageClientProps {
   tier: string
@@ -46,9 +46,9 @@ export default function MembershipPageClient({ tier }: MembershipPageClientProps
                 Apply for Membership
               </h2>
               <p className="text-muted-foreground mb-6">
-                Fill out the form below. We will review your application and contact you within 3-5 business days.
+                Fill out the comprehensive form below. We will review your application and contact you within 3-5 business days.
               </p>
-              <MembershipForm onClose={() => setShowForm(false)} selectedTier={tier} />
+              <MembershipFormComprehensive onClose={() => setShowForm(false)} selectedTier={tier} />
             </div>
           </div>
         </div>
