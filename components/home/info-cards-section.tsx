@@ -82,10 +82,6 @@ export async function InfoCardsSection() {
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-white">
             Connect. Create. Collaborate.
           </h2>
-          <p className="mt-4 text-white/70 max-w-2xl mx-auto text-base">
-            We play an extremely indispensable role in keeping the tyres of sourcing trade running smoothly.
-            BAA recognizes the importance of the sourcing agents and endeavors to achieve
-          </p>
         </div>
 
         {/* Cards */}
